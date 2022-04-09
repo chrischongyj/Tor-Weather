@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi_utils.tasks import repeat_every
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import HTMLResponse
 import requests
 import motor.motor_tornado
 from dotenv import load_dotenv
@@ -10,6 +12,8 @@ load_dotenv()
 app = FastAPI()
 client = motor.motor_tornado.MotorClient(os.getenv("MONGO_URI"))
 db = client['myFirstDatabase']
+
+templates = Jinja2Templates(directory="templates")
 
 
 @app.on_event("startup")
@@ -27,8 +31,7 @@ async def get_onionoo():
     print("Done.")
 
 
-@app.get("/test")
-async def test():
-    return {"message": "Hello World"}
-
-
+@app.get("/fingerprint/{id}", response_class=HTMLResponse)
+async def get_relay_info(request: Request, id: str):
+    relay_info = await db.relays.find_one({'fingerprint': id})
+    return templates.TemplateResponse("relay.html", {"request": request, "relay_info": relay_info})
