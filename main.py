@@ -31,7 +31,16 @@ async def get_onionoo():
     print("Done.")
 
 
+@app.get("/", response_class=HTMLResponse)
+async def root(request: Request):
+    return templates.TemplateResponse('index.html', {'request': request})
+
+
 @app.get("/fingerprint/{id}", response_class=HTMLResponse)
 async def get_relay_info(request: Request, id: str):
     relay_info = await db.relays.find_one({'fingerprint': id})
-    return templates.TemplateResponse("relay.html", {"request": request, "relay_info": relay_info})
+    if relay_info:
+        relay_running = bool(relay_info.get('running', False))
+    else:
+        relay_running = False
+    return templates.TemplateResponse("relay.html", {"request": request, "relay_info": relay_info, "relay_running": relay_running})

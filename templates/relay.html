@@ -8,8 +8,16 @@
     <title>Relay Information</title>
 </head>
 <body>
-    {% for key, value in relay_info.items() %}
-        <p> {{key}}: {{value}}</p>
-    {% endfor %}
+    {% if relay_info %}
+        {% if not relay_running %}
+        <p><b>Relay is down! Email should be sent</b></p>
+        {% endif %}
+   
+        {% for key, value in relay_info.items() %}
+            <p> {{key}}: {{value}}</p>
+        {% endfor %}
+    {% else %}
+        <p>No relay information available</p>
+    {% endif %}
 </body>
 </html>
