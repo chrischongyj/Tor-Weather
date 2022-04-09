@@ -3,14 +3,14 @@ from fastapi_utils.tasks import repeat_every
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
 import requests
-import motor.motor_tornado
+import motor.motor_asyncio
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
 app = FastAPI()
-client = motor.motor_tornado.MotorClient(os.getenv("MONGO_URI"))
+client = motor.motor_asyncio.AsyncIOMotorClient(os.getenv("MONGO_URI"))
 db = client['myFirstDatabase']
 
 templates = Jinja2Templates(directory="templates")
